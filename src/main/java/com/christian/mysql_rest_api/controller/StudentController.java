@@ -2,6 +2,8 @@ package com.christian.mysql_rest_api.controller;
 
 import com.christian.mysql_rest_api.model.Student;
 import com.christian.mysql_rest_api.repository.StudentRepository;
+import com.christian.mysql_rest_api.service.StudentService;
+import com.christian.mysql_rest_api.service.impl.StudentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +18,15 @@ import java.util.Optional;
 public class StudentController {
     @Autowired
     StudentRepository studentRepository;
+    @Autowired
+    StudentServiceImpl studentServiceImpl;
+
+
 
     @GetMapping("/students")
-    public ResponseEntity<List<Student>> getAllStudents (@RequestParam(required = false) String title) {
+    public ResponseEntity<List<Student>> getAllStudents (@RequestParam(required = false) String classroom) {
         try {
-            List<Student> students = new ArrayList<Student>();
-            if (title == null){
-                students.addAll(studentRepository.findAll());
-            }
-            else {
-                students.addAll(studentRepository.findByClassroom(title));
-            }
+            List<Student> students = studentServiceImpl.getAllStudents(classroom);
             if (students.isEmpty()){
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
