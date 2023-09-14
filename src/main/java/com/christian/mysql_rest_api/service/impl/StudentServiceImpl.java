@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class StudentServiceImpl implements StudentService {
     @Autowired
@@ -29,20 +31,53 @@ public class StudentServiceImpl implements StudentService {
     };
 
    public Student  createStudent(Student student){
-
+       Student _student;
+       _student = studentRepository.save(
+               new Student(
+                       student.getName(),
+                       student.getClassroom(),
+                       student.isPassed()
+               )
+       );
+       return  _student;
    };
 
     public Student getStudentById (long id){
+        Optional<Student> student = studentRepository.findById(id);
+        if (student.isPresent()){
+            return student.get();
+        }else {
+            return null;
+        }
+
 
     };
     public Student updateStudentById (long id, Student student){
+        Optional<Student> studentData = studentRepository.findById(id);
+        if (studentData.isEmpty()){
+            return null;
+        }else  {
+            Student  _student = studentData.get();
+            _student.setName(student.getName());
+            _student.setClassroom(student.getClassroom());
+            _student.setPassed(student.isPassed());
 
+            return studentRepository.save(_student);
+        }
     };
+  @Override
+   public void deleteStudentById (long id){
+        studentRepository.deleteById(id);
+    };
+   @Override
+  public   void deleteAllStudents (){
+      studentRepository.deleteAll();
+  }
 
-    void deleteStudentById (long id);
-    void deleteAllStudents ();
+    @Override
+    public List<Student> findByPassed() {
+        return studentRepository.findByPassed(true);
+    }
 
-    List<Student> findByPassed ();
-
-
+    ;
 }

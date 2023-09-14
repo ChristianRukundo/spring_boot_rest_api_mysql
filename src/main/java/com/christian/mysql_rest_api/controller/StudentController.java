@@ -42,16 +42,8 @@ public class StudentController {
     @PostMapping("students")
     public ResponseEntity<Student> createStudent (@RequestBody Student student) {
         try {
-            Student _student = studentRepository.save(
-                new Student(
-                        student.getName(),
-                        student.getClassroom(),
-                        student.isPassed()
-                )
-            );
-
+            Student _student = studentServiceImpl.createStudent(student);
             return new ResponseEntity<>(_student, HttpStatus.OK);
-
         }
         catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -61,11 +53,11 @@ public class StudentController {
     @GetMapping("students/{id}")
     public ResponseEntity<Student> getStudentById (@PathVariable("id") long id) {
         try {
-            Optional<Student> student = studentRepository.findById(id);
-            if (student.isEmpty()){
+            Student student = studentServiceImpl.getStudentById(id);
+            if (student == null){
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }else {
-                return new ResponseEntity<>(student.get(), HttpStatus.OK);
+                return new ResponseEntity<>(student, HttpStatus.OK);
             }
         }catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -74,16 +66,11 @@ public class StudentController {
     @PutMapping("students/{id}")
     public ResponseEntity<Student> updateStudentsById (@PathVariable("id") long id, @RequestBody Student student) {
         try {
-            Optional<Student> studentData = studentRepository.findById(id);
-            if(studentData.isEmpty()){
+            Student studentData = studentServiceImpl.updateStudentById(id, student);
+            if(studentData == null){
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }else  {
-              Student  _student = studentData.get();
-              _student.setName(student.getName());
-              _student.setClassroom(student.getClassroom());
-              _student.setPassed(student.isPassed());
-
-              return new ResponseEntity<>(studentRepository.save(_student), HttpStatus.OK);
+              return new ResponseEntity<>(studentData, HttpStatus.OK);
             }
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -93,8 +80,7 @@ public class StudentController {
     @DeleteMapping("students/{id}")
     public ResponseEntity<HttpStatus> deleteStudent (@PathVariable("id") long id) {
         try {
-            studentRepository.deleteById(id);
-
+            studentServiceImpl.deleteStudentById(id);
             return new ResponseEntity<>( HttpStatus.NO_CONTENT);
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -104,7 +90,7 @@ public class StudentController {
     @DeleteMapping("students")
     public  ResponseEntity<HttpStatus> deleteAllStudents (){
         try {
-            studentRepository.deleteAll();
+            studentServiceImpl.deleteAllStudents();
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         catch (Exception e) {
@@ -115,7 +101,7 @@ public class StudentController {
     @GetMapping("students/passed")
     public ResponseEntity<List<Student>> findByPassed () {
         try {
-            List<Student> students = studentRepository.findByPassed(true);
+            List<Student> students =studentServiceImpl.findByPassed();
             if(students.isEmpty()){
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
