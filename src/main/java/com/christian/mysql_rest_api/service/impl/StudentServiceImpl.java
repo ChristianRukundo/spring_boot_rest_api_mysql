@@ -4,8 +4,6 @@ import com.christian.mysql_rest_api.model.Student;
 import com.christian.mysql_rest_api.repository.StudentRepository;
 import com.christian.mysql_rest_api.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
