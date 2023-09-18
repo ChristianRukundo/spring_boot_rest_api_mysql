@@ -42,11 +42,7 @@ public class StudentServiceImpl implements StudentService {
 
     public Student getStudentById (long id){
         Optional<Student> student = studentRepository.findById(id);
-        if (student.isPresent()){
-            return student.get();
-        }else {
-            return null;
-        }
+        return student.orElse(null);
 
 
     };
